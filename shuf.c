@@ -81,6 +81,7 @@ int splitInput(char **buffer, char ***split_array, char delim[])
 	return number_of_strings;
 }
 
+// returns int [min, max]
 int uniform(int min, int max)
 {
 	srand(time(NULL));
@@ -91,8 +92,6 @@ int uniform(int min, int max)
 // I think it works as intended?
 void shuffle(char ***array, int size)
 {
-	srand(time(NULL));
-
 	for (int itr = 0; itr < size; itr++)
 	{
 		int pos = uniform(itr, size);
