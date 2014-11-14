@@ -24,49 +24,112 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
+
 // doesn't do anything yet...
-int readStdin(char *array[])
+void readStdin(char **read_buffer)
 {
-	return 0;
+
+	size_t file_size = 512;
+	if (stdin == NULL)
+	{
+		printf("unknown failure\n");
+		exit(EXIT_FAILURE);
+	}
+
+	*read_buffer = (char*) malloc(file_size);
+	if (read_buffer == NULL)
+	{
+		printf("allocation fail\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	fgets(*read_buffer, 512, stdin);
+	
+	fclose(stdin);
+}
+
+int splitInput(char **buffer, char ***split_array, char delim[])
+{
+	unsigned int number_of_strings = 0;
+	char *temp;
+
+	temp = strpbrk(*buffer, delim);
+	while (temp != NULL)
+	{
+		number_of_strings++;
+		temp = strpbrk(temp+1, delim);
+	}
+
+	*split_array = (char**) malloc(number_of_strings*sizeof(char*));
+	if (*split_array == NULL)
+	{
+		printf("memory failure");
+		exit(EXIT_FAILURE);
+	}
+	
+	temp = strtok(*buffer, delim);
+	int itr;
+	for (itr=0; temp != NULL; itr++)
+	{
+		(*split_array)[itr] = temp;
+		temp = strtok(NULL, delim);
+	}
+
+	return number_of_strings;
+}
+
+int uniform(int min, int max)
+{
+	srand(time(NULL));
+	int range = max - min;
+	return min + rand() % range;
 }
 
 // I think it works as intended?
-void shuffle(char *array[], int size)
+void shuffle(char ***array, int size)
 {
-	char *temp;
 	srand(time(NULL));
 
 	for (int itr = 0; itr < size; itr++)
 	{
-		int pos = itr + (rand() % (size-1) - itr);
-		temp  = array[itr];
-		array[itr] = array[pos];
-		array[pos] = temp;
+		int pos = uniform(itr, size);
+		char *temp  = (*array)[itr];
+		(*array)[itr] = (*array)[pos];
+		(*array)[pos] = temp;
 	}
 }
 
 // flags not implemented yet.
 int main(int argc, char *argv[])
 {
-	// currently only works with arguments
-	// implementing reading from stdin soon...
 	if (argc > 1)
 	{
 		argv++;
 		argc--;
-		shuffle(argv, argc);
+		shuffle(&argv, argc);
+		for (int itr=0; itr < argc; itr++)
+		{
+			printf("%s\n", argv[itr]);
+		}
 	}
 	else
 	{
-		argc = readStdin(argv);
+		char *buffer = NULL; //read buffer
+		readStdin(&buffer);
+
+		char **split_buffer = NULL; // splits read buffer by delimiters
+		int string_count = splitInput(&buffer, &split_buffer, "\n ");
+		shuffle(&split_buffer, string_count);
+
+		for (int itr = 0; itr < string_count; itr++) 
+		{
+			printf("%s ", split_buffer[itr]);
+		}
 	}
 
-	for (int itr=0; itr < argc; itr++)
-	{
-		printf("%s\n", argv[itr]);
-	}
 	
 	return 0;
 }
