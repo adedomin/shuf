@@ -26,11 +26,13 @@ SOFTWARE.
 #include <stdlib.h>
 #include <time.h>
 
+// doesn't do anything yet...
 int readStdin(char *array[])
 {
 	return 0;
 }
 
+// I think it works as intended?
 void shuffle(char *array[], int size)
 {
 	char *temp;
@@ -45,8 +47,11 @@ void shuffle(char *array[], int size)
 	}
 }
 
+// flags not implemented yet.
 int main(int argc, char *argv[])
 {
+	// currently only works with arguments
+	// implementing reading from stdin soon...
 	if (argc > 1)
 	{
 		argv++;
