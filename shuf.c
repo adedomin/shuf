@@ -81,7 +81,7 @@ int splitInput(char **buffer, char ***split_array, char delim[])
 	return number_of_strings;
 }
 
-// returns int [min, max]
+// returns int [min, max)
 int uniform(int min, int max)
 {
 	srand(time(NULL));
@@ -101,7 +101,6 @@ void shuffle(char ***array, int size)
 	}
 }
 
-// flags not implemented yet.
 int main(int argc, char *argv[])
 {
 	if (argc > 1)
@@ -125,7 +124,7 @@ int main(int argc, char *argv[])
 
 		for (int itr = 0; itr < string_count; itr++) 
 		{
-			printf("%s ", split_buffer[itr]);
+			printf("%s\n", split_buffer[itr]);
 		}
 	}
 
