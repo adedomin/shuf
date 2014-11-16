@@ -46,7 +46,7 @@ void readStdin(char **read_buffer)
 		exit(EXIT_FAILURE);
 	}
 	
-	fgets(*read_buffer, 512, stdin);
+	fgets(*read_buffer, 1024, stdin);
 	
 	fclose(stdin);
 }
@@ -100,12 +100,41 @@ void shuffle(char ***array, int size)
 	}
 }
 
+// testing shuffling
+// should be 50, 50 chance of first position being a 1 or 2
+void unit_test()
+{
+	int ones = 0;
+	int twos = 0;
+	for (int x=0; x < 1000; x++)
+	{
+		char *test[] = {"1","2"};
+		char **ptrtest = test;
+		shuffle(&ptrtest, 2);
+		if (!strcmp(test[0], "1"))
+		{
+			ones++;
+		}
+		else
+		{
+			twos++;
+		}
+	}
+
+	printf("ones: %d, twos: %d", ones, twos);
+}
+
 // flags not implemented
 int main(int argc, char *argv[])
 {
 	srand(time(NULL));
 	if (argc > 1)
 	{
+		if (!strcmp(argv[1], "--test"))
+		{
+			unit_test();
+			return 0;
+		}
 		argv++;
 		argc--;
 		shuffle(&argv, argc);
@@ -133,30 +162,3 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-// testing shuffling
-// should be 50, 50 chance of first position being a 1 or 2
-//int main()
-//{
-//	srand(time(NULL));
-//	int inorder = 0;
-//	int outorder= 0;
-//	for (int x=0; x < 1000; x++)
-//	{
-//		char *test[] = {"1","2"};
-//		char **ptrtest = test;
-//		shuffle(&ptrtest, 2);
-//		if (strcmp(test[0], "1"))
-//		{
-//			inorder++;
-//		}
-//		else
-//		{
-//			outorder++;
-//		}
-//	}
-//
-//	printf("order: %d, out of order: %d", inorder, outorder);
-//}
-
-
-	
