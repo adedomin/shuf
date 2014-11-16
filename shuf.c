@@ -84,7 +84,6 @@ int splitInput(char **buffer, char ***split_array, char delim[])
 // returns int [min, max)
 int uniform(int min, int max)
 {
-	srand(time(NULL));
 	int range = max - min;
 	return min + rand() % range;
 }
@@ -101,8 +100,10 @@ void shuffle(char ***array, int size)
 	}
 }
 
+// flags not implemented
 int main(int argc, char *argv[])
 {
+	srand(time(NULL));
 	if (argc > 1)
 	{
 		argv++;
@@ -131,3 +132,31 @@ int main(int argc, char *argv[])
 	
 	return 0;
 }
+
+// testing shuffling
+// should be 50, 50 chance of first position being a 1 or 2
+//int main()
+//{
+//	srand(time(NULL));
+//	int inorder = 0;
+//	int outorder= 0;
+//	for (int x=0; x < 1000; x++)
+//	{
+//		char *test[] = {"1","2"};
+//		char **ptrtest = test;
+//		shuffle(&ptrtest, 2);
+//		if (strcmp(test[0], "1"))
+//		{
+//			inorder++;
+//		}
+//		else
+//		{
+//			outorder++;
+//		}
+//	}
+//
+//	printf("order: %d, out of order: %d", inorder, outorder);
+//}
+
+
+	
