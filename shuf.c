@@ -27,12 +27,12 @@ SOFTWARE.
 #include <string.h>
 #include <time.h>
 
-
-// doesn't do anything yet...
+// not sure how to get size of a pipe yet
+// this should work for most cases though, adjust file_size as needed...
 void readStdin(char **read_buffer)
 {
 
-	size_t file_size = 512;
+	size_t file_size = 1024;
 	if (stdin == NULL)
 	{
 		printf("unknown failure\n");
@@ -46,16 +46,22 @@ void readStdin(char **read_buffer)
 		exit(EXIT_FAILURE);
 	}
 	
-	fgets(*read_buffer, 1024, stdin);
+	if (fgets(*read_buffer, file_size-1, stdin) == NULL)
+	{
+		printf("read fail\n");
+		exit(EXIT_FAILURE);
+	}
 	
 	fclose(stdin);
 }
 
+// takes input and splits it by delimiters 
 int splitInput(char **buffer, char ***split_array, char delim[])
 {
 	unsigned int number_of_strings = 0;
 	char *temp;
 
+	// gets number of strings that get delimited
 	temp = strpbrk(*buffer, delim);
 	while (temp != NULL)
 	{
@@ -63,13 +69,16 @@ int splitInput(char **buffer, char ***split_array, char delim[])
 		temp = strpbrk(temp+1, delim);
 	}
 
+	// allocates array of pointers
 	*split_array = (char**) malloc(number_of_strings*sizeof(char*));
 	if (*split_array == NULL)
 	{
 		printf("memory failure");
 		exit(EXIT_FAILURE);
 	}
-	
+
+	// pointers are made from read buffer using strtok
+	// pointers are added to array of pointers
 	temp = strtok(*buffer, delim);
 	int itr;
 	for (itr=0; temp != NULL; itr++)
@@ -88,7 +97,6 @@ int uniform(int min, int max)
 	return min + rand() % range;
 }
 
-// I think it works as intended?
 void shuffle(char ***array, int size)
 {
 	for (int itr = 0; itr < size; itr++)
@@ -128,6 +136,8 @@ void unit_test()
 int main(int argc, char *argv[])
 {
 	srand(time(NULL));
+
+	//gets input from list of args
 	if (argc > 1)
 	{
 		if (!strcmp(argv[1], "--test"))
@@ -143,6 +153,7 @@ int main(int argc, char *argv[])
 			printf("%s\n", argv[itr]);
 		}
 	}
+	// reads from stdin (pipe, keyboard, file)
 	else
 	{
 		char *buffer = NULL; //read buffer
@@ -156,9 +167,11 @@ int main(int argc, char *argv[])
 		{
 			printf("%s\n", split_buffer[itr]);
 		}
+
+		free(buffer);
+		free(split_buffer);
 	}
 
-	
 	return 0;
 }
 
