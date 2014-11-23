@@ -27,11 +27,8 @@ SOFTWARE.
 #include <string.h>
 #include <time.h>
 
-// not sure how to get size of a pipe yet
-// this should work for most cases though, adjust file_size as needed...
-//
 // apparently getting the size of a pipe is stilly since it's like a queue
-// once data is read, it gets destroyed meaning finding it's size is pointless.
+// once data is read, it gets destroyed meaning finding its size is pointless.
 void readStdin(char **read_buffer)
 {
 
@@ -49,19 +46,21 @@ void readStdin(char **read_buffer)
 		exit(EXIT_FAILURE);
 	}
 
+	// reads from stdin till nothing left to read, (fread will return non 1)
 	int itr = 0;
 	while (fread(*read_buffer+itr, 1, 1, stdin) == 1)
 	{
+		// dynamically resizes memory geometrically to handle any size pipe
 		if (file_size == itr+1)
 		{
-			file_size *= 2;
+			file_size *= 2; // geometric progression...
 			*read_buffer = (char*) realloc(*read_buffer, file_size);
 			if (*read_buffer == NULL)
 			{
 				printf("memory failure\n");
 			}
 		}
-		itr++;
+		itr++; // next address box in read buffer
 	}
 	
 	fclose(stdin);
@@ -165,7 +164,7 @@ int main(int argc, char *argv[])
 			printf("%s\n", argv[itr]);
 		}
 	}
-	// reads from stdin (pipe, keyboard, file)
+	// reads from stdin (pipe, file)
 	else
 	{
 		char *buffer = NULL; //read buffer
