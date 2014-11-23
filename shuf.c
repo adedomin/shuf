@@ -29,10 +29,13 @@ SOFTWARE.
 
 // not sure how to get size of a pipe yet
 // this should work for most cases though, adjust file_size as needed...
+//
+// apparently getting the size of a pipe is stilly since it's like a queue
+// once data is read, it gets destroyed meaning finding it's size is pointless.
 void readStdin(char **read_buffer)
 {
 
-	size_t file_size = 1024;
+	int file_size = 1;
 	if (stdin == NULL)
 	{
 		printf("unknown failure\n");
@@ -45,11 +48,20 @@ void readStdin(char **read_buffer)
 		printf("allocation fail\n");
 		exit(EXIT_FAILURE);
 	}
-	
-	if (fgets(*read_buffer, file_size-1, stdin) == NULL)
+
+	int itr = 0;
+	while (fread(*read_buffer+itr, 1, 1, stdin) == 1)
 	{
-		printf("read fail\n");
-		exit(EXIT_FAILURE);
+		if (file_size == itr+1)
+		{
+			file_size *= 2;
+			*read_buffer = (char*) realloc(*read_buffer, file_size);
+			if (*read_buffer == NULL)
+			{
+				printf("memory failure\n");
+			}
+		}
+		itr++;
 	}
 	
 	fclose(stdin);
