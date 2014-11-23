@@ -145,8 +145,8 @@ int main(int argc, char *argv[])
 			unit_test();
 			return 0;
 		}
-		argv++;
-		argc--;
+		argv++; // skips past program's name which is argv[0]
+		argc--; // reflects ignorance of program name 
 		shuffle(&argv, argc);
 		for (int itr=0; itr < argc; itr++)
 		{
